@@ -15,12 +15,12 @@ import com.ticxar.test_back.dto.UserDTO;
 @FeignClient(name = "dummyJsonClient", url = "https://dummyjson.com")
 public interface DummyJsonClient {
 
-    @PostMapping(value = "/auth/login", consumes = "application/json")
-	AuthResponse login(@RequestBody AuthRequest request);
+	@PostMapping(value = "/auth/login", consumes = "application/json")
+	AuthResponse login(@RequestBody AuthRequest authRequest);
 
-    @GetMapping("/auth/me")
-    UserDTO getAuthenticatedUser(@RequestHeader("Authorization") String bearerToken);
+	@GetMapping("/auth/me")
+	UserDTO getAuthenticatedUser(@RequestHeader("Authorization") String bearerToken);
 
-    @GetMapping("/users")
-    List<UserDTO> getUsers();
+	@GetMapping("/users")
+	List<UserDTO> getUsers();
 }

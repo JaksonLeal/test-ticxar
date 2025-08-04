@@ -15,16 +15,12 @@ import com.ticxar.test_back.service.AuthService;
 @RequestMapping("/api")
 public class AuthController {
 
-	private final AuthService authService;
-
 	@Autowired
-	public AuthController(AuthService authService) {
-		this.authService = authService;
-	}
+	private AuthService authService;
 
 	@PostMapping("/login")
 	public ResponseEntity<UserDTO> login(@RequestBody AuthRequest authRequest) {
-		UserDTO user = authService.loginAndFetchUser(authRequest);
+		UserDTO user = authService.loginUser(authRequest);
 		return ResponseEntity.ok(user);
 	}
 

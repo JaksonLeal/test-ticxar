@@ -15,33 +15,35 @@ import com.ticxar.test_back.repository.LoginLogRepository;
 @Service
 public class AuthService {
 
-	private final DummyJsonClient dummyJsonClient;
-	private final LoginLogRepository loginLogRepository;
-
 	@Autowired
-	public AuthService(DummyJsonClient dummyJsonClient, LoginLogRepository loginLogRepository) {
-		this.dummyJsonClient = dummyJsonClient;
-		this.loginLogRepository = loginLogRepository;
-	}
+	private DummyJsonClient dummyJsonClient;
+	@Autowired
+	private LoginLogRepository loginLogRepository;
 
-	public UserDTO loginAndFetchUser(AuthRequest request) {
-		// 1. Autenticarse con DummyJSON
-		AuthResponse authResponse = dummyJsonClient.login(request);
+	public UserDTO loginUser(AuthRequest authRequest) {
 
-		// 2. Obtener el usuario autenticado con el accessToken
-		System.out.println("el token es: " + authResponse.getAccessToken());
+		// se autentica con DummyJSON
+		AuthResponse authResponse = dummyJsonClient.login(authRequest);
+
+		// obtiene el usuario autenticado con el accessToken
 		String bearer = "Bearer " + authResponse.getAccessToken();
 		UserDTO user = dummyJsonClient.getAuthenticatedUser(bearer);
 
-		// 3. Registrar el login exitoso
+		// guarda en postgresql si el logueo es exitoso
+		if (user != null)
+			saveAuth(authResponse);
+
+		return user;
+	}
+
+	private void saveAuth(AuthResponse authResponse) {
+
 		LoginLog log = new LoginLog();
 		log.setUsername(authResponse.getUsername());
 		log.setLoginTime(LocalDateTime.now());
 		log.setAccessToken(authResponse.getAccessToken());
 		log.setRefreshToken(authResponse.getRefreshToken());
-
 		loginLogRepository.save(log);
 
-		return user;
 	}
 }
