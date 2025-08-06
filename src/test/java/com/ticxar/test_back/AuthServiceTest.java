@@ -39,6 +39,7 @@ public class AuthServiceTest {
 	public void setUp() {
 		MockitoAnnotations.openMocks(this);
 
+		// se establecen datos de prueba
 		authRequest = new AuthRequest("testuser", "password123");
 
 		authResponse = new AuthResponse();
@@ -57,20 +58,22 @@ public class AuthServiceTest {
 	}
 
 	@Test
-    public void testLoginAndFetchUser_successfulFlow() {
+    public void testLoginUser_Flow() {
         
         when(dummyJsonClient.login(authRequest)).thenReturn(authResponse);
-        when(dummyJsonClient.getAuthenticatedUser("Bearer access-token")).thenReturn(expectedUser);
+        when(dummyJsonClient.getAuthenticatedUser("Bearer "+authResponse.getAccessToken())).thenReturn(expectedUser);
 
+        //debera llamar a los metodos del flujo de logueo
+        UserDTO currentUser = authService.loginUser(authRequest);
         
-        UserDTO actualUser = authService.loginUser(authRequest);
+        assertNotNull(currentUser);
+        assertEquals(expectedUser.getUsername(), currentUser.getUsername());
 
-        
-        assertNotNull(actualUser);
-        assertEquals(expectedUser.getUsername(), actualUser.getUsername());
-
+        //verificar que si se hayan llamado los objetos
         verify(dummyJsonClient).login(authRequest);
-        verify(dummyJsonClient).getAuthenticatedUser("Bearer access-token");
+        verify(dummyJsonClient).getAuthenticatedUser("Bearer "+authResponse.getAccessToken());
         verify(loginLogRepository).save(any(LoginLog.class));
-    }
+    
+	}
+	
 }

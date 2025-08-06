@@ -8,7 +8,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.ticxar.test_back.dto.AuthRequest;
-import com.ticxar.test_back.dto.UserDTO;
 import com.ticxar.test_back.service.AuthService;
 
 @RestController
@@ -19,9 +18,9 @@ public class AuthController {
 	private AuthService authService;
 
 	@PostMapping("/login")
-	public ResponseEntity<UserDTO> login(@RequestBody AuthRequest authRequest) {
-		UserDTO user = authService.loginUser(authRequest);
-		return ResponseEntity.ok(user);
+	public ResponseEntity<?> login(@RequestBody AuthRequest authRequest) {
+
+		return authService.loginUser(authRequest);
 	}
 
 }
