@@ -11,6 +11,8 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 
 import com.ticxar.test_back.dto.AuthRequest;
 import com.ticxar.test_back.dto.AuthResponse;
@@ -64,10 +66,10 @@ public class AuthServiceTest {
         when(dummyJsonClient.getAuthenticatedUser("Bearer "+authResponse.getAccessToken())).thenReturn(expectedUser);
 
         //debera llamar a los metodos del flujo de logueo
-        UserDTO currentUser = authService.loginUser(authRequest);
+        ResponseEntity<?> currentUser = authService.loginUser(authRequest);
         
         assertNotNull(currentUser);
-        assertEquals(expectedUser.getUsername(), currentUser.getUsername());
+        assertEquals(HttpStatus.OK, currentUser.getStatusCode());
 
         //verificar que si se hayan llamado los objetos
         verify(dummyJsonClient).login(authRequest);
@@ -75,5 +77,5 @@ public class AuthServiceTest {
         verify(loginLogRepository).save(any(LoginLog.class));
     
 	}
-	
+
 }
